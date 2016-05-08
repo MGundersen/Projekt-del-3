@@ -48,7 +48,7 @@ public class PQHeap implements PQ {
             return null;
         }
         Element min = priorityList.get(1);
-        System.out.println(min.value);
+        //System.out.println(min.getData());
         Collections.swap(priorityList, 1, priorityQueueSize);
         priorityList.remove(priorityQueueSize);
         priorityQueueSize--;
@@ -91,11 +91,11 @@ public class PQHeap implements PQ {
      * if it is, then the while loop ends and we stop.
      */
     private void decreaseKey(int i, Element e) {
-        if (e.value < priorityList.get(i).value) {
+        if (e.getKey() < priorityList.get(i).getKey()) {
             System.out.println("The new value is smaller than the current key");
         }
         priorityList.set(i, e);
-        while (i > 1 && priorityList.get(Parent(i)).value > priorityList.get(i).value) {
+        while (i > 1 && priorityList.get(Parent(i)).getKey() > priorityList.get(i).getKey()) {
             Collections.swap(priorityList, i, Parent(i));
             i = Parent(i);
         }
@@ -118,12 +118,12 @@ public class PQHeap implements PQ {
         int L = Left(i);
         int R = Right(i);
 
-        if (L <= priorityQueueSize && priorityList.get(L).value < priorityList.get(i).value) {
+        if (L <= priorityQueueSize && priorityList.get(L).getKey() < priorityList.get(i).getKey()) {
             Smallest = L;
         } else {
             Smallest = i;
         }
-        if (R <= priorityQueueSize && priorityList.get(R).value < priorityList.get(Smallest).value) {
+        if (R <= priorityQueueSize && priorityList.get(R).getKey() < priorityList.get(Smallest).getKey()) {
             Smallest = R;
         }
         if (Smallest != i) {
