@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class Encode {
 
-    private static HashMap<Integer, Integer> hashMap = new HashMap<>();
+    private static HashMap<Integer, String> hashMap = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -15,25 +15,31 @@ public class Encode {
         //FileOutputStream outFile = new FileOutputStream(args[1]);
 
         try {
-            FileInputStream inFile = new FileInputStream(new File("C:\\Users\\MGund\\OneDrive\\Studie\\Datalogi 2016\\Algoritmer og datastrukturer\\Projekt del 3\\out\\production\\Projekt del 3\\DNA.txt"));
+            File inFile = new File("C:\\Users\\MGund\\OneDrive\\Studie\\Datalogi 2016\\Algoritmer og datastrukturer\\Projekt del 3\\out\\production\\Projekt del 3\\DNA.txt");
+            File outFile = new File("C:\\Users\\MGund\\OneDrive\\Studie\\Datalogi 2016\\Algoritmer og datastrukturer\\Projekt del 3\\out\\production\\Projekt del 3\\newDNA.txt");
 
-            //System.out.println( huffmann(createFreq(inFile)).getKey() );
-            //createFile(huffmann(createFreq(inFile)));
 
-            nodeWalk(huffmann(createFreq(inFile)));
+            createFreq(inFile);
+            //(nodeWalk(huffmann(createFreq(inFile)));
+
+            //createFile(inFile,outFile);
 
         } catch (Exception e) {e.printStackTrace();}
 
     }
 
-    private static int[] createFreq(FileInputStream inFile) throws Exception {
+    private static int[] createFreq(File file) throws Exception {
+        FileInputStream inFile = new FileInputStream(file);
+        BitInputStream in = new BitInputStream(inFile);
         int[] freq = new int[256];
 
         int bit;
-        while ((bit = inFile.read()) != -1) {
+        while ((bit = in.readInt()) != -1) {
+            System.out.println( "Adding 1 more to index: " + bit  );
             freq[bit] = freq[bit] + 1;
         }
 
+        inFile.close();
         return freq;
     }
 
@@ -53,54 +59,61 @@ public class Encode {
             }
 
         for (int i = 0 ; i < heapSize-1 ; i++) {
-            Object left = pq.extractMin();
-            Object right = pq.extractMin();
-            Integer newFreq = ((Element)left).getKey() + ((Element)right).getKey();
+            //System.out.println( "Extracting 2 objects" );
+            Element left = pq.extractMin();
+            Element right = pq.extractMin();
+            Integer newFreq = left.getKey() + right.getKey();
 
-            if (Node.class.isInstance( ((Element)left).getData() )) {
-                left = ((Element)left).getData();
-            }
-            if (Node.class.isInstance( ((Element)right).getData() )) {
-                right = ((Element)right).getData();
-            }
-
-            Node n = new Node(left, right );
+            //System.out.println( "Creating a new node n and adding left and right object" );
+            Node n = new Node( left, right );
+            //System.out.println( "Creating a new element and adding our freq and data to it" );
             Element e = new Element();
             e.setKey(newFreq);
             e.setData( n );
-
+            //System.out.println( "Inserting our new element into our heap " + e.getKey() + " - " + e.getData() );
             pq.insert( e );
         }
 
         return pq.extractMin();
     }
 
-    private static void createFile(Element e) {
+    private static void createFile(File infile, File outfile) {
 
         try {
-            FileInputStream inFile = new FileInputStream(new File("C:\\Users\\MGund\\OneDrive\\Studie\\Datalogi 2016\\Algoritmer og datastrukturer\\Projekt del 3\\out\\production\\Projekt del 3\\DNA.txt"));
-            int bit;
-            while ((bit = inFile.read()) != -1) {
+            FileInputStream inFile = new FileInputStream(infile);
+            FileOutputStream outFile = new FileOutputStream(outfile);
+            BitInputStream in = new BitInputStream(inFile);
+            BitOutputStream out = new BitOutputStream(outFile);
+            int inBit;
+            while ((inBit = inFile.read()) != -1) {
+                String outBit = hashMap.get(inBit);
+                System.out.println( "inBit: " + inBit + " - outBit: " +  outBit );
 
+                //outFile.write();
             }
+            inFile.close();
+            outFile.close();
         } catch (Exception i) {i.printStackTrace();}
     }
 
-    private static void nodeWalk (Object e) {
+    private static void nodeWalk (Element e) {
 
-        StringBuilder sb1 = new StringBuilder();
-        StringBuilder sb2 = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         // First we check if our current element is null
         if (e != null) {
             //If our current Element has a node as data
-            if (Node.class.isInstance( ((Element)e).getData()) ) {
+            if (Node.class.isInstance( e.getData()) ) {
                 //Then we continue our walk to the left
-                System.out.println( "Walking left" );
-                sb1.append(0);
-                innerNodeWalk(sb1, ((Node)((Element)e).getData()).getLeft());
-                System.out.println( "Walking right" );
-                sb2.append(1);
-                innerNodeWalk(sb2,  ((Node)((Element)e).getData()).getRight());
+                sb.append(0);
+                //System.out.println( "Walking left - sb: " + sb );
+                innerNodeWalk(sb, ((Node)((Element)e).getData()).getLeft());
+                sb.deleteCharAt(sb.length()-1);
+                sb.append(1);
+                //System.out.println( "Walking right - sb: " + sb );
+                innerNodeWalk(sb,  ((Node)((Element)e).getData()).getRight());
+                sb.deleteCharAt(sb.length()-1);
+            } else {
+                //Hvis data ikke var en node
             }
         }
     }
@@ -112,19 +125,18 @@ public class Encode {
             //If our current Element has a node as data
             if (Node.class.isInstance( ((Element)e).getData()) ) {
                 //Then we continue our walk to the left
-                System.out.println( "Walking left" );
                 sb.append(0);
-                innerNodeWalk(sb,  ((Node)((Element)e).getData()).getLeft());
+                //System.out.println( "Walking left - sb: " + sb );
+                innerNodeWalk(sb,  ((Node)((Element)e).getData()).getLeft() );
                 sb.deleteCharAt(sb.length()-1);
                 sb.append(1);
-                System.out.println( "Walking right" );
+                //System.out.println( "Walking right - sb: " + sb );
                 innerNodeWalk(sb,  ((Node)((Element)e).getData()).getRight());
+                sb.deleteCharAt(sb.length()-1);
             } else {
-                System.out.println( "Adding element: " + ((int)((Element) e).getData()) + " - value: " + ((Element) e).getKey() );
-                hashMap.put(((int)((Element) e).getData()),((Element) e).getKey());
+                System.out.println( "Adding data: " + ((Element) e).getData() + " with the value: " + sb.toString() );
+                hashMap.put(((int)((Element) e).getData()), sb.toString());
             }
-
-
         }
     }
 }

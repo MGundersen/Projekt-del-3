@@ -3,19 +3,19 @@
  */
 public class Node {
 
-    private Object left;
-    private Object right;
+    private Element left;
+    private Element right;
 
-    public Node(Object left, Object right) {
+    public Node(Element left, Element right) {
         this.left = left;
         this.right = right;
     }
 
-    public Object getLeft() {
+    public Element getLeft() {
         return left;
     }
 
-    public Object getRight() {
+    public Element getRight() {
         return right;
     }
 }
