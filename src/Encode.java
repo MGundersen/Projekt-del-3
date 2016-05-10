@@ -19,10 +19,13 @@ public class Encode {
             File outFile = new File("C:\\Users\\MGund\\OneDrive\\Studie\\Datalogi 2016\\Algoritmer og datastrukturer\\Projekt del 3\\out\\production\\Projekt del 3\\newDNA.txt");
 
 
-            createFreq(inFile);
-            //(nodeWalk(huffmann(createFreq(inFile)));
+            /* Laver vores hyppighedstabel */
+            int[] freq = createFreq(inFile);
+            /* Fylder vores hashMap */
+            nodeWalk(huffmann(freq));
 
-            //createFile(inFile,outFile);
+            /* Skriver til vores nye fil */
+            createFile(inFile,outFile);
 
         } catch (Exception e) {e.printStackTrace();}
 
@@ -30,13 +33,12 @@ public class Encode {
 
     private static int[] createFreq(File file) throws Exception {
         FileInputStream inFile = new FileInputStream(file);
-        BitInputStream in = new BitInputStream(inFile);
         int[] freq = new int[256];
 
-        int bit;
-        while ((bit = in.readInt()) != -1) {
-            System.out.println( "Adding 1 more to index: " + bit  );
-            freq[bit] = freq[bit] + 1;
+        int intIn;
+        while ((intIn = inFile.read()) != -1) {
+            //System.out.println( "Adding 1 more to index: " + intIn  );
+            freq[intIn] = freq[intIn] + 1;
         }
 
         inFile.close();
@@ -84,13 +86,19 @@ public class Encode {
             FileOutputStream outFile = new FileOutputStream(outfile);
             BitInputStream in = new BitInputStream(inFile);
             BitOutputStream out = new BitOutputStream(outFile);
+
             int inBit;
             while ((inBit = inFile.read()) != -1) {
                 String outBit = hashMap.get(inBit);
                 System.out.println( "inBit: " + inBit + " - outBit: " +  outBit );
 
-                //outFile.write();
+                for (String s : outBit.split(""))
+                    //System.out.println( Integer.parseInt(s) );
+                    out.writeBit( Integer.parseInt(s) );
             }
+
+            out.writeBit(0);
+            out.writeBit(1);
             inFile.close();
             outFile.close();
         } catch (Exception i) {i.printStackTrace();}
@@ -134,7 +142,7 @@ public class Encode {
                 innerNodeWalk(sb,  ((Node)((Element)e).getData()).getRight());
                 sb.deleteCharAt(sb.length()-1);
             } else {
-                System.out.println( "Adding data: " + ((Element) e).getData() + " with the value: " + sb.toString() );
+                //System.out.println( "Adding data: " + ((Element) e).getData() + " with the value: " + sb.toString() );
                 hashMap.put(((int)((Element) e).getData()), sb.toString());
             }
         }
