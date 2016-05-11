@@ -15,10 +15,9 @@ public class Decode {
     public static void main(String[] args) {
 
         try {
-            FileInputStream inFile = new FileInputStream(new File("C:\\Users\\MGund\\OneDrive\\Studie\\Datalogi 2016\\Algoritmer og datastrukturer\\Projekt del 3\\out\\production\\Projekt del 3\\newDNA.txt"));
-            FileOutputStream outFile = new FileOutputStream(new File("C:\\Users\\MGund\\OneDrive\\Studie\\Datalogi 2016\\Algoritmer og datastrukturer\\Projekt del 3\\out\\production\\Projekt del 3\\newnewDNA.txt"));
+            FileInputStream inFile = new FileInputStream(new File("C:\\Users\\Danie\\Documents\\GitHub\\Projekt-del-3\\out\\production\\Projekt del 3\\newDNA.txt"));
+            FileOutputStream outFile = new FileOutputStream(new File("C:\\Users\\Danie\\Documents\\GitHub\\Projekt-del-3\\out\\production\\Projekt del 3\\newnewDNA.txt"));
             BitInputStream in = new BitInputStream(inFile);
-            BitOutputStream out = new BitOutputStream(outFile);
 
             int[] freq = new int[256];
             int bit;
@@ -48,12 +47,16 @@ public class Decode {
                     for (Map.Entry<Integer, String> s : hashMap.entrySet() ) {
                         if (s.getValue().equals(sb.toString())) {
                             //System.out.println( "Writing " + s.getKey() + " to the new file.." );
-                            out.writeInt(s.getKey());
+                            outFile.write(s.getKey());
                         }
                     }
                     sb.delete(0, sb.length());
                 }
             }
+            in.close();
+            inFile.close();
+            outFile.close();
+
 
         } catch (Exception e) {e.printStackTrace();}
 
