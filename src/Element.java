@@ -1,6 +1,6 @@
 /*
-        MADE BY Mathias Gundersen(MGUND15), D3 AND Daniel Jørgensen(DANJO14), D3
-*/
+ * Created by MGund15, Danjo14 & Jopha15
+ */
 
 public class Element {
 

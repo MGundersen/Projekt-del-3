@@ -1,6 +1,7 @@
-/**
- * Created by MGund on 5/8/2016.
+/*
+ * Created by MGund15, Danjo14 & Jopha15
  */
+
 public class Node {
 
     private Element left;

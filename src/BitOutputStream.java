@@ -1,8 +1,6 @@
-
 import java.io.IOException;
 import java.io.OutputStream;
-
-/**
+/*
  * Methods to transform an output byte stream into a stream of
  * bits. Because they are written to an underlying byte stream, the
  * end of the stream is padded with 0's up to a multiple of 8 bits.

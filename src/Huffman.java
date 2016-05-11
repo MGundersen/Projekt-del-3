@@ -3,12 +3,22 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 
-/**
- * Created by MGund on 10-May-16.
+/*
+ * Created by MGund15, Danjo14 & Jopha15
  */
+
 public class Huffman {
 
+    //Hashmap to quickly get our binary representation of our characters
     public HashMap<Integer, String> hashMap = new HashMap<>();
+
+    /*
+     * huffmannStart takes an int array as input, instantiates our minHeap with the amount of character
+     * with a frequecny larger than 0. It creates an element for every index with a value higher than 0, and inserts
+     * the element into our minHeap. Afterwards it loops over the size of our minHeap-1, so we remain with 1 element in
+     * our minHeap. The loop extracts 2 elements, creates a new node referenceing to our 2 elements, and inserts this
+     * node into a new element with a key value of the previous 2 element's frequency combined.
+     */
 
     public Element huffmannStart(int[] freq) {
         Integer heapSize = 0;
@@ -21,28 +31,30 @@ public class Huffman {
                 Element x = new Element();
                 x.setKey(freq[i]);
                 x.setData(i);
-                //System.out.println( "Key: " + x.getKey() + " - Data: " + x.getData() );
                 pq.insert(x);
             }
 
         for (int i = 0 ; i < heapSize-1 ; i++) {
-            //System.out.println( "Extracting 2 objects" );
             Element left = pq.extractMin();
             Element right = pq.extractMin();
             Integer newFreq = left.getKey() + right.getKey();
 
-            //System.out.println( "Creating a new node n and adding left and right object" );
             Node n = new Node( left, right );
-            //System.out.println( "Creating a new element and adding our freq and data to it" );
             Element e = new Element();
             e.setKey(newFreq);
             e.setData( n );
-            //System.out.println( "Inserting our new element into our heap " + e.getKey() + " - " + e.getData() );
             pq.insert( e );
         }
 
         return pq.extractMin();
     }
+
+    /*
+     * Nodewalk and innerNodewalk walks through our huffman tree, and when it goes to the left it appends a 0 to our
+     * stringbuilder, and a 1 when it goes to the right. And when it finds an element(and not another node) it
+     * puts this element into our hashMap with the data of our element as key, and the string we created on the way
+     * as the value.
+     */
 
     public void nodeWalk (Element e) {
 
@@ -53,15 +65,11 @@ public class Huffman {
             if (Node.class.isInstance( e.getData()) ) {
                 //Then we continue our walk to the left
                 sb.append(0);
-                //System.out.println( "Walking left - sb: " + sb );
                 innerNodeWalk(sb, ((Node)((Element)e).getData()).getLeft());
                 sb.deleteCharAt(sb.length()-1);
                 sb.append(1);
-                //System.out.println( "Walking right - sb: " + sb );
                 innerNodeWalk(sb,  ((Node)((Element)e).getData()).getRight());
                 sb.deleteCharAt(sb.length()-1);
-            } else {
-                //Hvis data ikke var en node
             }
         }
     }
@@ -74,26 +82,28 @@ public class Huffman {
             if (Node.class.isInstance( ((Element)e).getData()) ) {
                 //Then we continue our walk to the left
                 sb.append(0);
-                //System.out.println( "Walking left - sb: " + sb );
                 innerNodeWalk(sb,  ((Node)((Element)e).getData()).getLeft() );
                 sb.deleteCharAt(sb.length()-1);
                 sb.append(1);
-                //System.out.println( "Walking right - sb: " + sb );
                 innerNodeWalk(sb,  ((Node)((Element)e).getData()).getRight());
                 sb.deleteCharAt(sb.length()-1);
             } else {
-                //System.out.println( "Adding data: " + ((Element) e).getData() + " with the value: " + sb.toString() );
                 hashMap.put(((int)((Element) e).getData()), sb.toString());
             }
         }
     }
+
+    /*
+     * Creates 3 streams, an input, output and wraps our output with an BitOutputStream. We write our table to the file
+     * so we can extract it when we decode our file. Then we read our original file, and writes our binary representation
+     * to the decoded file.
+     */
 
     public void createFile(File infile, File outfile, int[] freq) {
 
         try {
             FileInputStream inFile = new FileInputStream(infile);
             FileOutputStream outFile = new FileOutputStream(outfile);
-            BitInputStream in = new BitInputStream(inFile);
             BitOutputStream out = new BitOutputStream(outFile);
 
 
@@ -106,18 +116,16 @@ public class Huffman {
             int inBit;
             while ((inBit = inFile.read()) != -1) {
                 String outBit = hashMap.get(inBit);
-                //System.out.println( "inBit: " + inBit + " - outBit: " +  outBit );
-
-                for (String s : outBit.split("")) {
-                    //System.out.println(Integer.parseInt(s));
+                for (String s : outBit.split(""))
                     out.writeBit(Integer.parseInt(s));
-                }
             }
 
             out.writeBit(0);
             out.writeBit(1);
-            inFile.close();
+            out.close();
             outFile.close();
+            inFile.close();
+
         } catch (Exception i) {i.printStackTrace();}
     }
 

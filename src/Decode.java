@@ -1,44 +1,47 @@
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * Created by MGund on 10-May-16.
+/*
+ * Created by MGund15, Danjo14 & Jopha15
  */
+
 public class Decode {
 
+    /*
+     * Hashmap that contains our binary representation and our character value created from our frequency table
+     */
     private static HashMap<Integer, String> hashMap;
 
     public static void main(String[] args) {
 
         try {
-            FileInputStream inFile = new FileInputStream(new File("C:\\Users\\Danie\\Documents\\GitHub\\Projekt-del-3\\out\\production\\Projekt del 3\\newDNA.txt"));
-            FileOutputStream outFile = new FileOutputStream(new File("C:\\Users\\Danie\\Documents\\GitHub\\Projekt-del-3\\out\\production\\Projekt del 3\\newnewDNA.txt"));
+            /* Creates our 3 input, output and bitInput streams */
+            FileInputStream inFile = new FileInputStream(args[0]);
+            FileOutputStream outFile = new FileOutputStream(args[1]);
             BitInputStream in = new BitInputStream(inFile);
 
+            /* Reconstructs our int array from the first 256 integers in our decoded file */
             int[] freq = new int[256];
             int bit;
             int counter = 0;
             while ( counter < 256 ) {
                 bit = in.readInt();
-                //System.out.println("Counter: " + counter + " - bit: " + bit2);
                 freq[counter] = bit;
                 counter++;
             }
+            /* Creates our huffmann tree and fill our hashmap again same way as Encode */
             Huffman hf = new Huffman();
-
             hf.nodeWalk(hf.huffmannStart(freq));
             hashMap = hf.hashMap;
 
 
-            for (Map.Entry<Integer, String> s : hashMap.entrySet() ) {
-                System.out.println( "Key: " + s.getKey() + " - value: " + s.getValue());
-            }
-
-
+            /*
+             * We go through every bit of our file. If the current bit is in our hashmap, we write the corresponding key
+             * to the new file, and restart/delete the characters in our StringBuilder. If the bit is not in our hashmap
+             * we check the next bit, and combine it with the last bit, and check again if it is in our hashmap and so on
+             */
             StringBuilder sb = new StringBuilder();
 
             while ((bit = in.readBit())!= -1) {
@@ -62,6 +65,7 @@ public class Decode {
 
         }
 
+    /* Method for checking the values in our hashmap and compares them to the inputted string */
     private static Boolean checkMap(String bit) {
         for (String s : hashMap.values() ) {
             if (s.equals(bit)) {
@@ -71,7 +75,4 @@ public class Decode {
         return false;
     }
 
-    private static boolean isInOurList (int bit) {
-        return true;
-    }
 }

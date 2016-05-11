@@ -1,7 +1,5 @@
-
 import java.io.IOException;
 import java.io.InputStream;
-
 /**
  * Methods to transform an input byte stream into a stream of
  * bits.
